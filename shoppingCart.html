@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Document</title>
+<style>* {
+    border: 0;
+    margin: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    background: #f0f5ff; /* Light bluish background color */
+    color: #333;
+  }
+  
+  header {
+    /* position: sticky;
+    top: 0; */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5em 3em; /* Increased padding */
+    background: linear-gradient(
+      to right,
+      #61a5ff,
+      #98c0ff
+    ); /* Gradient background with bluish colors */
+  }
+  
+  header * {
+    cursor: pointer;
+  }
+  
+  .productscontainer {
+    display: grid;
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(300px, 1fr)
+    ); /* Adjusted grid item size */
+    gap: 30px; /* Increased gap */
+    padding: 2em; /* Increased padding */
+    background: #e0e8ff; /* Light bluish background */
+    border-radius: 20px; /* Rounded corners */
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1); /* Subtle box shadow */
+  }
+  
+  .productscontainer .product {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Increased gap */
+    align-items: center;
+    background: #cfdfff; /* Lighter bluish background color */
+    padding: 20px;
+    border-radius: 15px;
+  }
+  
+  .addtocart {
+    background-image: url('https://d3dyfaf3iutrxo.cloudfront.net/general/upload/019055d9d67644ef8231997569a3aab2.png');
+    height: 20px;
+    width: 20px;
+  
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+  
+  .ptitle {
+    height: 50px;
+    overflow-y: auto;
+  }
+  
+  .product img {
+    border-bottom: 1px solid #bcc7e3; /* Lighter bluish border */
+  }
+  
+  .priceandaddtocart {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+  }
+  
+  .carticon {
+    display: flex;
+    gap: 16px;
+  }
+  
+  .carticon::after {
+    content: attr(items);
+  }
+  
+  .cartui {
+    width: 45vw;
+    background: rgba(255, 255, 255, 0.9); /* Semi-transparent background */
+    padding: 30px; /* Increased padding */
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    right: -999px;
+    top: 0;
+    transition: all 0.5s ease;
+    z-index: 99;
+    height: 100vh;
+    border-left: 1px solid #9bb8ff; /* Border for separation with bluish color */
+  }
+  
+  .cartopened {
+    right: 0;
+  }
+  
+  .cartui .closecart {
+    border-bottom: 1px solid #9bb8ff; /* Border for separation with bluish color */
+    margin-bottom: 1.5em;
+    cursor: pointer;
+  }
+  
+  .cartui .pccontainer {
+    height: 75vh;
+    overflow-y: auto; /* Scrollbar for overflow */
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Increased gap */
+  }
+  
+  .nameandprice {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin: 1.5em 0; /* Increased margin */
+  }
+  
+  .pnp {
+    display: flex;
+    gap: 20px; /* Increased gap */
+  }
+  
+  button {
+    cursor: pointer;
+    padding: 15px 25px; /* Adjusted padding */
+    border-radius: 10px;
+    background: #61a5ff; /* Bluish primary button color */
+    box-shadow: 0px 4px 10px rgba(97, 165, 255, 0.2); /* Soft shadow with bluish color */
+    color: white;
+    transition: transform 0.3s ease;
+  }
+  
+  button:hover {
+    transform: translateY(-3px);
+  }
+  
+  .overlay {
+    background: rgba(51, 51, 51, 0.5); /* Semi-transparent overlay */
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    z-index: 99;
+    display: none;
+  }
+  
+  .cartproduct {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0; /* Adjusted padding */
+    border-bottom: 1px solid #bcc7e3; /* Lighter bluish border */
+  }
+  
+  .pnp .img {
+    width: 9rem;
+    height: 8rem;
+  }
+  
+  .pnp .img img {
+    width: 9rem;
+    height: 8rem;
+  }
+  .addqtt{
+    padding: 5px;
+  }
+  .minusqtt{
+    padding: 5px;
+  }
+  
+  @media screen and (max-width: 700px) {
+    .cartui {
+      width: 90vw;
+    }
+  }</style>
+</head>
+
+<body>
+ <div class="overlay">
+
+ </div>
+
+ <header>
+  <div class="logo">Logo</div>
+  <button class="carticon" items="0">Cart</button>
+
+ </header>
+
+ <div class="cartui">
+  <button class="closecart">close</button>
+  <div class="pccontainer">
+
+  </div>
+ </div>
+
+
+ <div class="productscontainer">
+
+ </div>
+
+ <script >var productList;
+    var cart = [];
+    var cartValue = 0;
+    fetch("https://content.newtonschool.co/v1/pr/65f821a4f6a42e24cda7e50c/productsData")
+        .then((response) => response.json())
+        .then((data) => {
+            productList = data;
+            productDis();
+        });
+    
+    function productDis() {
+        console.log(productList);
+        productList.forEach((data) => {
+            var product = document.createElement("div");
+            product.className = "product";
+            product.innerHTML = `
+                <img width="250px" height="350px" src="${data.image}" alt="${data.title}" />
+                <p class='ptitle'>${data.title}</p>
+                <div class="priceandaddtocart">
+                    <p class="pprice">${data.price} DH</p>
+                    <button class="addtocart" data-productid="${data.id}"></button>
+                </div>`;
+            var productContainer = document.querySelector(".productscontainer");
+            productContainer.append(product);
+        });
+    
+        let addButtons = document.querySelectorAll('.addtocart');
+        addButtons.forEach((button) => {
+            button.addEventListener('click', function (event) {
+                let productId = event.target.getAttribute('data-productid');
+                let obj = productList.find((product) => product.id == productId);
+                let ids = cart.map((r) => r.id);
+                if (!ids.includes(parseInt(productId))) {
+                    obj.quantity = 1;
+                    cart.push(obj);
+                    cartValue++;
+                    displayproductsLS();
+                } else {
+                    let index = cart.findIndex(item => item.id == productId);
+                    cart[index].quantity++;
+                    cartValue ++
+                    displayproductsLS();
+                }
+            }); 
+        });
+    }
+    
+    const header = document.querySelector("header");
+    header.style.position = "sticky";
+    header.style.top = "0px";
+    var carticon = document.querySelector(".carticon");
+    var cartui = document.querySelector(".cartui");
+    var closeButton = document.querySelector(".closecart");
+    
+    carticon.addEventListener("click", () => {
+        cartui.classList.add("cartopened");
+    });
+    
+    closeButton.addEventListener("click", () => {
+        cartui.classList.remove("cartopened");
+    });
+    
+    function displayproductsLS() {
+        document.querySelector('.pccontainer').innerHTML = '';
+        cart.forEach((e) => {
+            document.querySelector('.pccontainer').innerHTML += `
+                <div class="cartproduct">
+                    <div class="pnp">
+                        <div class="img">
+                            <img width="90px" src="${e.image}" alt="">
+                        </div>
+                        <div class="nameandprice">
+                            <p>${e.title}</p>
+                            <p>${e.price}</p>
+                            <!-- Display quantity with buttons for increasing and decreasing -->
+                            <p>
+                                Qty
+                                <button class="addqtt">+</button>
+                                <span class="qtt">${e.quantity}</span>
+                                <button class="minusqtt">-</button>
+                            </p>
+                        </div>
+                    </div>
+                    <button class="delete" productid="${e.id}">X</button>
+                </div>
+            `;
+        });
+    
+    
+        carticon.setAttribute("items", cartValue);
+    
+    
+        const addQuantityButtons = document.querySelectorAll('.addqtt');
+        const minusQuantityButtons = document.querySelectorAll('.minusqtt');
+    
+        addQuantityButtons.forEach((button, index) => {
+            button.addEventListener('click', () => {
+                cart[index].quantity++;
+                cartValue++
+                displayproductsLS();
+            });
+        });
+    
+        minusQuantityButtons.forEach((button, index) => {
+            button.addEventListener('click', () => {
+                if (cart[index].quantity > 1) {
+                    cart[index].quantity--;
+                    cartValue --;
+                    displayproductsLS();
+                }
+            });
+        });
+    
+        const removeButtons = document.querySelectorAll(".delete");
+        removeButtons.forEach((button) => {
+            button.addEventListener("click", () => {
+                let productId = button.getAttribute('productid');
+                for (let i = 0; i < cart.length; i++) {
+    
+                    if (cart[i].id == productId) {
+                        cartValue = cartValue - cart[i].quantity
+                        cart.splice(i, 1);
+                        break;
+                    }
+                }
+                displayproductsLS();
+            });
+        });
+    }</script>
+</body>
+
+</html>
